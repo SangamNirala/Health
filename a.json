@@ -5,14 +5,13 @@
         "url": "https://api.pdf.co/v1/pdf/convert/to/html",
         "method": "POST",
         "responseFormat": "json",
-        "jsonParameters": false,
+        "jsonParameters": true,
         "options": {},
         "sendBody": true,
-        "bodyContentType": "binary",
-        "headerParametersJson": "{ \"x-api-key\": \"shubhnirala123@gmail.com_Gb315VzPfCSoeeeIrXIYI0GYmCnpV6RPLl5zz8mIvnADTTIoAtbfuEkjiXEOQPK1\" }",
-        "binaryPropertyName": "Upload_your_resume"
+        "bodyParametersJson": "={\"file\": \"{{$binary[\\\"Upload_your_resume\\\"].data}}\", \"name\": \"resume.html\"}",
+        "headerParametersJson": "{ \"x-api-key\": \"shubhnirala123@gmail.com_Gb315VzPfCSoeeeIrXIYI0GYmCnpV6RPLl5zz8mIvnADTTIoAtbfuEkjiXEOQPK1\", \"Content-Type\": \"application/json\" }"
       },
-      "name": "Convert PDF to HTML",
+      "name": "Convert PDF to HTML (Base64)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 3,
       "position": [
