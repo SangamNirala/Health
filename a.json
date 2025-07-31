@@ -1,24 +1,155 @@
 {
+  "name": "PDF to HTML Converter",
   "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "binaryPropertyName": "data"
+      },
+      "id": "2",
+      "name": "Upload PDF File",
+      "type": "n8n-nodes-base.fileUpload",
+      "typeVersion": 1,
+      "position": [400, 300]
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "https://file.io",
+        "sendBinaryData": true,
+        "binaryPropertyName": "data",
+        "responseFormat": "json"
+      },
+      "id": "3",
+      "name": "Upload to File.io",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 2,
+      "position": [600, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "json": [
+            {
+              "key": "url",
+              "value": "={{$json.link}}"
+            },
+            {
+              "key": "async",
+              "value": "false"
+            }
+          ]
+        }
+      },
+      "id": "4",
+      "name": "Set PDF.co Payload",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [800, 300]
+    },
     {
       "parameters": {
         "url": "https://api.pdf.co/v1/pdf/convert/to/html",
         "method": "POST",
-        "responseFormat": "json",
+        "authentication": "headerAuth",
+        "headerParametersUi": {
+          "parameter": [
+            {
+              "name": "x-api-key",
+              "value": "shubhnirala123@gmail.com_Gb315VzPfCSoeeeIrXIYI0GYmCnpV6RPLl5zz8mIvnADTTIoAtbfuEkjiXEOQPK1"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
         "jsonParameters": true,
-        "options": {},
-        "sendBody": true,
-        "bodyParametersJson": "={\"file\": \"{{$binary[\\\"Upload_your_resume\\\"].data}}\", \"name\": \"resume.html\"}",
-        "headerParametersJson": "{ \"x-api-key\": \"shubhnirala123@gmail.com_Gb315VzPfCSoeeeIrXIYI0GYmCnpV6RPLl5zz8mIvnADTTIoAtbfuEkjiXEOQPK1\", \"Content-Type\": \"application/json\" }"
+        "bodyParametersJson": "={\"url\": \"{{$json.url}}\", \"async\": false}",
+        "responseFormat": "json"
       },
-      "name": "Convert PDF to HTML (Base64)",
+      "id": "5",
+      "name": "Convert PDF to HTML",
       "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 3,
-      "position": [
-        620,
-        300
-      ]
+      "typeVersion": 2,
+      "position": [1000, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{$json.url}}",
+        "method": "GET",
+        "responseFormat": "file",
+        "fileName": "converted.html"
+      },
+      "id": "6",
+      "name": "Download HTML",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 2,
+      "position": [1200, 300]
     }
   ],
-  "connections": {}
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Upload PDF File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload PDF File": {
+      "main": [
+        [
+          {
+            "node": "Upload to File.io",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to File.io": {
+      "main": [
+        [
+          {
+            "node": "Set PDF.co Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set PDF.co Payload": {
+      "main": [
+        [
+          {
+            "node": "Convert PDF to HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert PDF to HTML": {
+      "main": [
+        [
+          {
+            "node": "Download HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
 }
